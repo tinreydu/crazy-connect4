@@ -2,8 +2,8 @@
 // Created by tinre on 4/19/2021.
 //
 
-#ifndef CONNECT_4_GAME_BOARD_H
-#define CONNECT_4_GAME_BOARD_H
+#ifndef CONNECT_4_CONNECT4_BOARD_H
+#define CONNECT_4_CONNECT4_BOARD_H
 
 #include <cstddef>
 #include <vector>
@@ -14,6 +14,7 @@ namespace connect4 {
         GameBoard(size_t length, size_t height, size_t win_length);
         char CheckWinningToken();
         void DropPiece(size_t column);
+        std::vector<std::vector<char>> GetBoard() const;
 
     private:
         size_t length_;
@@ -26,4 +27,4 @@ namespace connect4 {
     };
 }
 
-#endif //CONNECT_4_GAME_BOARD_H
+#endif //CONNECT_4_CONNECT4_BOARD_H
