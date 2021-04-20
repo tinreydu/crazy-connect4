@@ -11,12 +11,14 @@
 namespace connect4 {
     class GameBoard {
     public:
-        GameBoard(size_t length, size_t height, size_t win_length);
+        GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn);
         char CheckWinningToken();
         void DropPiece(size_t column);
         std::vector<std::vector<char>> GetBoard() const;
+        bool IsPlayerOneTurn() const;
 
     private:
+        bool player_one_turn_;
         size_t length_;
         size_t height_;
         size_t win_length_;
