@@ -58,9 +58,11 @@ namespace connect4 {
 
         /**
          * Drops a piece at a certain column. Per connect 4 rules, the piece will fall to the lowest open spot in the column
+         * If overridden, ignores if someone has already won
          * @param column
+         * @param override if override on or off
          */
-        void DropPiece(size_t column);
+        void DropPiece(size_t column, bool override);
 
         /**
          * Returns the board

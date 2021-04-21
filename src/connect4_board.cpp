@@ -33,28 +33,33 @@ namespace connect4 {
         return board_;
     }
 
-    void GameBoard::DropPiece(size_t column) {
-        try {
-            size_t y = 0;
-            while (board_.at(column).at(y) != kEmptySpot) {
-                y++;
-            }
-            if (player_one_turn_) {
-                board_.at(column).at(y) = kPlayerOneToken;
-            } else {
-                board_.at(column).at(y) = kPlayerTwoToken;
-            }
-            player_one_turn_ = !player_one_turn_;
-            token_count_++;
+    void GameBoard::DropPiece(size_t column, bool override) {
+        if (winning_token_ == kEmptySpot) {
+            try {
+                size_t y = 0;
+                while (board_.at(column).at(y) != kEmptySpot) {
+                    y++;
+                }
+                if (player_one_turn_) {
+                    board_.at(column).at(y) = kPlayerOneToken;
+                } else {
+                    board_.at(column).at(y) = kPlayerTwoToken;
+                }
+                player_one_turn_ = !player_one_turn_;
+                token_count_++;
 
-            // The minimum amount of tokens on the board to win is 2 * win length - 1
-            // We don't start checking until after the minimum amount of tokens has been reached
-            if (token_count_ > (2 * win_length_) - 1) {
-                winning_token_ = CheckWinningToken(column, y);
+                // The minimum amount of tokens on the board to win is 2 * win length - 1
+                // We don't start checking until after the minimum amount of tokens has been reached
+                if (!override) {
+                    if (token_count_ >= (2 * win_length_) - 1) {
+                        winning_token_ = CheckWinningToken(column, y);
+                    }
+                }
+            } catch (const std::out_of_range &e) {
+                throw "Out of range!";
             }
-
-        } catch (const std::out_of_range &e) {
-            throw "Out of range!";
+        } else {
+            std::cout << "Someone has already won!";
         }
     }
 
@@ -67,7 +72,13 @@ namespace connect4 {
     }
 
     char GameBoard::CheckWinningToken(size_t column, size_t row) const {
-        return kEmptySpot;
+        if (CheckHorizontalWin(column, row, kPlayerOneToken) || CheckVerticalWin(column, row, kPlayerOneToken) || CheckDiagonalWin(column, row, kPlayerOneToken, 0) || CheckDiagonalWin(column, row, kPlayerOneToken, 1)) {
+            return kPlayerOneToken;
+        } else if (CheckHorizontalWin(column, row, kPlayerTwoToken) || CheckVerticalWin(column, row, kPlayerTwoToken) || CheckDiagonalWin(column, row, kPlayerTwoToken, 0) || CheckDiagonalWin(column, row, kPlayerTwoToken, 1)) {
+            return kPlayerTwoToken;
+        } else {
+            return kEmptySpot;
+        }
     }
 
     bool GameBoard::CheckHorizontalWin(size_t column, size_t row, char token) const {
@@ -75,10 +86,11 @@ namespace connect4 {
         for (size_t x = 0; x < length_; x++) {
             if (board_.at(x).at(row) == token) {
                 token_in_row++;
-            }
-
-            if (token_in_row == win_length_) {
-                return true;
+                if (token_in_row == win_length_) {
+                    return true;
+                }
+            } else {
+                token_in_row = 0;
             }
         }
         return false;
@@ -89,10 +101,11 @@ namespace connect4 {
         for (size_t y = 0; y < height_; y++) {
             if (board_.at(column).at(y) == token) {
                 token_in_row++;
-            }
-
-            if (token_in_row == win_length_) {
-                return true;
+                if (token_in_row == win_length_) {
+                    return true;
+                }
+            } else {
+                token_in_row = 0;
             }
         }
         return false;
@@ -108,10 +121,11 @@ namespace connect4 {
             for (int i = 0; row + i < height_ && column + i < length_; i++) {
                 if (board_.at(column + i).at(row + i) == token) {
                     token_in_row++;
-                }
-
-                if (token_in_row == win_length_) {
-                    return true;
+                    if (token_in_row == win_length_) {
+                        return true;
+                    }
+                } else {
+                    token_in_row = 0;
                 }
             }
         } else {
@@ -122,10 +136,11 @@ namespace connect4 {
             for (int i = 0; row - i >= 0 && column + i < length_; i++) {
                 if (board_.at(column + i).at(row - i) == token) {
                     token_in_row++;
-                }
-
-                if (token_in_row == win_length_) {
-                    return true;
+                    if (token_in_row == win_length_) {
+                        return true;
+                    }
+                } else {
+                    token_in_row = 0;
                 }
             }
         }
