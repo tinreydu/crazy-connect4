@@ -88,6 +88,12 @@ namespace connect4 {
          */
         char GetWinner() const;
 
+        size_t GetLength() const;
+
+        size_t GetHeight() const;
+
+        size_t GetWinLength() const;
+
     private:
         bool player_one_turn_;
         size_t length_;

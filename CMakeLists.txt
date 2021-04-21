@@ -50,7 +50,8 @@ get_filename_component(APP_PATH "${CMAKE_CURRENT_SOURCE_DIR}/" ABSOLUTE)
 include("${CINDER_PATH}/proj/cmake/modules/cinderMakeApp.cmake")
 
 list(APPEND SOURCE_FILES src/connect4_board.cpp
-        src/connect4_app.cpp)
+        src/connect4_app.cpp
+        src/connect4_commandline.cpp)
 
 list(APPEND TEST_FILES tests/test_connect4_game.cpp)
 
@@ -69,6 +70,12 @@ ci_make_app(
         LIBRARIES       catch2
 )
 
+ci_make_app(
+        APP_NAME connect4-console
+        CINDER_PATH ${CINDER_PATH}
+        SOURCES apps/connect4_console.cpp ${SOURCE_FILES}
+        INCLUDES include
+)
 if(MSVC)
     set_property(TARGET connect4-app-test APPEND_STRING PROPERTY LINK_FLAGS " /SUBSYSTEM:CONSOLE")
 endif()

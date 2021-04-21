@@ -59,7 +59,7 @@ namespace connect4 {
                 throw "Out of range!";
             }
         } else {
-            std::cout << "Someone has already won!";
+            std::cout << "Someone has already won!" << std::endl;
         }
     }
 
@@ -149,6 +149,18 @@ namespace connect4 {
 
     char GameBoard::GetWinner() const {
         return winning_token_;
+    }
+
+    size_t GameBoard::GetWinLength() const {
+        return win_length_;
+    }
+
+    size_t GameBoard::GetLength() const {
+        return length_;
+    }
+
+    size_t GameBoard::GetHeight() const {
+        return height_;
     }
 }
 
