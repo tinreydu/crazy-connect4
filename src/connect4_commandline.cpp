@@ -5,8 +5,9 @@
 #include <string>
 #include <iostream>
 #include "connect4_commandline.h"
+
 namespace connect4 {
-    void CommandLine::Display() const{
+    void CommandLine::Display() const {
         std::string output;
         for (size_t y = board.GetHeight(); y > 0; y--) {
             output += "|";

@@ -10,8 +10,16 @@
 namespace connect4 {
     class CommandLine {
     public:
+        /**
+         * Displays the game board
+         */
         void Display() const;
+
+        /**
+         * Takes in the user's input
+         */
         void Query();
+
     private:
         GameBoard board = GameBoard(7, 6, 4, true);
     };

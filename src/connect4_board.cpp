@@ -72,9 +72,12 @@ namespace connect4 {
     }
 
     char GameBoard::CheckWinningToken(size_t column, size_t row) const {
-        if (CheckHorizontalWin(column, row, kPlayerOneToken) || CheckVerticalWin(column, row, kPlayerOneToken) || CheckDiagonalWin(column, row, kPlayerOneToken, 0) || CheckDiagonalWin(column, row, kPlayerOneToken, 1)) {
+        if (CheckHorizontalWin(column, row, kPlayerOneToken) || CheckVerticalWin(column, row, kPlayerOneToken) ||
+            CheckDiagonalWin(column, row, kPlayerOneToken, 0) || CheckDiagonalWin(column, row, kPlayerOneToken, 1)) {
             return kPlayerOneToken;
-        } else if (CheckHorizontalWin(column, row, kPlayerTwoToken) || CheckVerticalWin(column, row, kPlayerTwoToken) || CheckDiagonalWin(column, row, kPlayerTwoToken, 0) || CheckDiagonalWin(column, row, kPlayerTwoToken, 1)) {
+        } else if (CheckHorizontalWin(column, row, kPlayerTwoToken) || CheckVerticalWin(column, row, kPlayerTwoToken) ||
+                   CheckDiagonalWin(column, row, kPlayerTwoToken, 0) ||
+                   CheckDiagonalWin(column, row, kPlayerTwoToken, 1)) {
             return kPlayerTwoToken;
         } else {
             return kEmptySpot;
