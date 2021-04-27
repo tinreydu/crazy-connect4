@@ -4,6 +4,8 @@
 
 #include <stdexcept>
 #include <iostream>
+#include <cinder/Color.h>
+#include <connect4_app.h>
 #include "../include/connect4_board.h"
 
 namespace connect4 {
@@ -164,6 +166,23 @@ namespace connect4 {
 
     size_t GameBoard::GetHeight() const {
         return height_;
+    }
+
+    void GameBoard::Display() const{
+        ci::gl::color(ci::Color("blue"));
+        ci::gl::drawSolidRect(ci::Rectf(glm::vec2(0,0), glm::vec2(700, 600)));
+
+        int xCoord = 50;
+        int yCoord = 50;
+        for (size_t x = 0; x < length_; x++) {
+            for (size_t y = 0; y < height_; y++) {
+                ci::gl::color(ci::Color("black"));
+                ci::gl::drawSolidCircle(glm::vec2(xCoord, yCoord), 45);
+                yCoord += 100;
+            }
+            yCoord = 50;
+            xCoord += 100;
+        }
     }
 }
 

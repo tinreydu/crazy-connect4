@@ -94,6 +94,8 @@ namespace connect4 {
 
         size_t GetWinLength() const;
 
+        void Display() const;
+
     private:
         bool player_one_turn_;
         size_t length_;

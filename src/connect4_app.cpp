@@ -12,6 +12,8 @@ namespace connect4 {
     void Connect4App::draw() {
         ci::Color background_color("black");
         ci::gl::clear(background_color);
+
+        board_.Display();
     }
 
     void Connect4App::update() {
