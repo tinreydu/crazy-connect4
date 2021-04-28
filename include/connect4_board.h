@@ -32,7 +32,8 @@ namespace connect4 {
          * @param min_y
          * @param max_y
          */
-        GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x, int min_y, int max_y);
+        GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x, int min_y,
+                  int max_y);
 
         /**
          * Creates a connect 4 game of size 7 x 6 with win length of 4
@@ -107,12 +108,27 @@ namespace connect4 {
          */
         char GetWinner() const;
 
+        /**
+         * Helper method that returns length of board
+         * @return
+         */
         int GetLength() const;
 
+        /**
+        * Helper method that returns height of board
+        * @return
+        */
         int GetHeight() const;
 
+        /**
+        * Helper method that returns win length of board
+        * @return
+        */
         int GetWinLength() const;
 
+        /**
+         * Draws the board and pieces
+         */
         void DrawBoard() const;
 
     private:

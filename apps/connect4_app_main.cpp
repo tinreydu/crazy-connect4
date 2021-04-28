@@ -6,7 +6,7 @@
 
 using connect4::Connect4App;
 
-void prepareSettings(Connect4App::Settings* settings) {
+void prepareSettings(Connect4App::Settings *settings) {
     settings->setResizable(false);
 }
 

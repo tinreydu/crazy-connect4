@@ -35,8 +35,7 @@ TEST_CASE("Dropping Piece Tests") {
         REQUIRE(test_board.GetBoard().at(0).at(0) == 'o');
         REQUIRE(test_board.IsPlayerOneTurn());
         REQUIRE(test_board.GetTokenCount() == 2);
-    }
-    SECTION("Test stacking pieces") {
+    }SECTION("Test stacking pieces") {
         GameBoard test_board(3, 3, 2, true);
         test_board.DropPiece(2, false);
         test_board.DropPiece(2, false);
@@ -244,7 +243,7 @@ TEST_CASE("Checking for Winner Tests") {
         test_board.DropPiece(2, false);
         test_board.DropPiece(2, false);
         test_board.DropPiece(1, false);
-        REQUIRE(test_board.CheckWinningToken(1,0) == 'x');
+        REQUIRE(test_board.CheckWinningToken(1, 0) == 'x');
         REQUIRE(test_board.GetWinner() == 'x');
     }
 
@@ -255,7 +254,7 @@ TEST_CASE("Checking for Winner Tests") {
         test_board.DropPiece(0, false);
         test_board.DropPiece(3, false);
         test_board.DropPiece(0, false);
-        REQUIRE(test_board.CheckWinningToken(0,3) == 'o');
+        REQUIRE(test_board.CheckWinningToken(0, 3) == 'o');
         REQUIRE(test_board.GetWinner() == 'o');
     }
 
@@ -265,7 +264,7 @@ TEST_CASE("Checking for Winner Tests") {
         test_board.DropPiece(2, false);
         test_board.DropPiece(3, false);
         test_board.DropPiece(2, false);
-        REQUIRE(test_board.CheckWinningToken(2,1) == ' ');
+        REQUIRE(test_board.CheckWinningToken(2, 1) == ' ');
         REQUIRE(test_board.GetWinner() == ' ');
     }
 

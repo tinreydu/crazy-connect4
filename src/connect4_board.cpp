@@ -228,7 +228,8 @@ namespace connect4 {
     void GameBoard::DrawBoard() const {
         ci::gl::color(ci::Color("blue"));
         // The Board will consist of the middle half of the screen. The sides are 1/4 of the window size each.
-        ci::gl::drawSolidRect(ci::Rectf(glm::vec2(max_x_ / 4,max_y_ / 4), glm::vec2((3 * max_x_) / 4, (3 * max_y_) / 4)));
+        ci::gl::drawSolidRect(
+                ci::Rectf(glm::vec2(max_x_ / 4, max_y_ / 4), glm::vec2((3 * max_x_) / 4, (3 * max_y_) / 4)));
 
         int xCoord = (max_x_ / 4) + (x_space_ / 2);
         int yCoord = ((3 * max_y_) / 4) - (y_space_ / 2);

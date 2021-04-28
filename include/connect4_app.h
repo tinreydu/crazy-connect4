@@ -13,10 +13,17 @@ namespace connect4 {
     public:
         Connect4App();
 
+        /**
+         * Draws the board and pieces
+         */
         void draw() override;
 
         void update() override;
 
+        /**
+         * Handles keyboard input
+         * @param event which key is pressed
+         */
         void keyDown(ci::app::KeyEvent event) override;
 
         const int kWindowSizeX = 1920;
@@ -25,10 +32,6 @@ namespace connect4 {
 
     private:
         size_t current_col_;
-        size_t last_piece_col_;
-        size_t last_piece_row_;
-        bool started_;
-
         GameBoard board_ = GameBoard(7, 6, 4, true, 0, kWindowSizeX, 0, kWindowSizeY);
     };
 }
