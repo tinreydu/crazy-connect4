@@ -21,6 +21,24 @@ namespace connect4 {
         GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn);
 
         /**
+         * Creates a Connect 4 game board to be displayed. Same as above, but with window bounds
+         * @param length of board
+         * @param height of board
+         * @param win_length required tokens in a row to win
+         * @param player_one_turn is it player one's turn?
+         * @param min_x
+         * @param max_x
+         * @param min_y
+         * @param max_y
+         */
+        GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn, int min_x, int max_x, int min_y, int max_y);
+
+        /**
+         * Creates a connect 4 game of size 7 x 6 with win length of 4
+         */
+        GameBoard();
+
+        /**
          * Finds which token has won at given location
          * @param column horizontal coordinate
          * @param row vertical coordinate
@@ -94,7 +112,9 @@ namespace connect4 {
 
         size_t GetWinLength() const;
 
-        void Display() const;
+        void DrawBoard() const;
+
+        void Reset();
 
     private:
         bool player_one_turn_;
@@ -110,6 +130,15 @@ namespace connect4 {
         const char kPlayerOneToken = 'x';
         const char kPlayerTwoToken = 'o';
         const char kEmptySpot = ' ';
+
+        int min_x_;
+        int min_y_;
+        int max_x_;
+        int max_y_;
+
+        int radius_;
+        int x_space_;
+        int y_space_;
     };
 }
 

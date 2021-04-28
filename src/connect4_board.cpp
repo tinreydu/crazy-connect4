@@ -14,10 +14,11 @@ namespace connect4 {
             length_ = length;
             height_ = height;
             win_length_ = win_length;
-            std::vector<char> column;
             token_count_ = 0;
             winning_token_ = ' ';
+            player_one_turn_ = player_one_turn;
 
+            std::vector<char> column;
             for (size_t x = 0; x < length; x++) {
                 for (size_t y = 0; y < height; y++) {
                     column.push_back(' ');
@@ -25,11 +26,66 @@ namespace connect4 {
                 board_.push_back(column);
                 column.clear();
             }
-            player_one_turn_ = player_one_turn;
         } else {
             throw "Invalid board size!";
         }
     }
+
+    GameBoard::GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn, int min_x, int max_x,
+                         int min_y, int max_y) {
+        if (win_length <= length || win_length <= height) {
+            length_ = length;
+            height_ = height;
+            win_length_ = win_length;
+            token_count_ = 0;
+            winning_token_ = ' ';
+            player_one_turn_ = player_one_turn;
+
+            std::vector<char> column;
+            for (size_t x = 0; x < length; x++) {
+                for (size_t y = 0; y < height; y++) {
+                    column.push_back(' ');
+                }
+                board_.push_back(column);
+                column.clear();
+            }
+            min_x_ = min_x;
+            max_x_ = max_x;
+            min_y_ = min_y;
+            max_y_ = max_y;
+
+            x_space_ = (max_x_ / 2) / length_;
+            y_space_ = (max_y_ / 2) / height_;
+
+            if (x_space_ < y_space_) {
+                radius_ = (0.9 * x_space_) / 2;
+            } else {
+                radius_ = (0.9 * y_space_) / 2;
+            }
+        } else {
+            throw "Invalid board size!";
+        }
+
+    }
+
+    GameBoard::GameBoard() {
+        length_ = 7;
+        height_ = 6;
+        win_length_ = 4;
+        token_count_ = 0;
+        winning_token_ = ' ';
+        player_one_turn_ = true;
+
+        std::vector<char> column;
+        for (size_t x = 0; x < length_; x++) {
+            for (size_t y = 0; y < height_; y++) {
+                column.push_back(' ');
+            }
+            board_.push_back(column);
+            column.clear();
+        }
+    }
+
 
     std::vector<std::vector<char>> GameBoard::GetBoard() const {
         return board_;
@@ -168,20 +224,21 @@ namespace connect4 {
         return height_;
     }
 
-    void GameBoard::Display() const{
+    void GameBoard::DrawBoard() const{
         ci::gl::color(ci::Color("blue"));
-        ci::gl::drawSolidRect(ci::Rectf(glm::vec2(0,0), glm::vec2(700, 600)));
+        // The Board will consist of the middle half of the screen. The sides are 1/4 of the window size each.
+        ci::gl::drawSolidRect(ci::Rectf(glm::vec2(max_x_ / 4,max_y_ / 4), glm::vec2((3 * max_x_) / 4, (3 * max_y_) / 4)));
 
-        int xCoord = 50;
-        int yCoord = 50;
+        int xCoord = (max_x_ / 4) + (x_space_ / 2);
+        int yCoord = (max_y_ / 4) + (y_space_ / 2);
         for (size_t x = 0; x < length_; x++) {
             for (size_t y = 0; y < height_; y++) {
                 ci::gl::color(ci::Color("black"));
-                ci::gl::drawSolidCircle(glm::vec2(xCoord, yCoord), 45);
-                yCoord += 100;
+                ci::gl::drawSolidCircle(glm::vec2(xCoord, yCoord), radius_);
+                yCoord += y_space_;
             }
-            yCoord = 50;
-            xCoord += 100;
+            yCoord = (max_y_ / 4) + (y_space_ / 2);
+            xCoord += x_space_;
         }
     }
 }

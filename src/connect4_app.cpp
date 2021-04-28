@@ -6,17 +6,36 @@
 
 namespace connect4 {
     Connect4App::Connect4App() {
-        ci::app::setWindowSize(kWindowSize, kWindowSize);
+        ci::app::setWindowSize(kWindowSizeX, kWindowSizeY);
+        current_col_ = board_.GetLength() / 2;
     }
 
     void Connect4App::draw() {
-        ci::Color background_color("black");
+        ci::Color background_color("white");
         ci::gl::clear(background_color);
-
-        board_.Display();
+        board_.DrawBoard();
     }
 
     void Connect4App::update() {
         return;
     }
+
+    void Connect4App::keyDown(ci::app::KeyEvent event) {
+        switch (event.getCode()) {
+            case ci::app::KeyEvent::KEY_RIGHT:
+                current_col_++;
+                break;
+
+            case ci::app::KeyEvent::KEY_LEFT:
+                current_col_--;
+                break;
+
+            case ci::app::KeyEvent::KEY_RETURN:
+                board_.DropPiece(current_col_, false);
+                break;
+
+        }
+    }
+
+
 }

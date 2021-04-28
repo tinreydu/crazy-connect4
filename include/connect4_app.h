@@ -17,11 +17,15 @@ namespace connect4 {
 
         void update() override;
 
-        const int kWindowSize = 875;
+        void keyDown(ci::app::KeyEvent event) override;
+
+        const int kWindowSizeX = 1920;
+        const int kWindowSizeY = 1080;
         const int kMargin = 100;
 
     private:
-        GameBoard board_ = GameBoard(7, 6, 4, true);
+        size_t current_col_;
+        GameBoard board_ = GameBoard(7, 6, 4, true, 0, kWindowSizeX, 0, kWindowSizeY);
     };
 }
 
