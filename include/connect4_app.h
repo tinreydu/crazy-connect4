@@ -25,6 +25,10 @@ namespace connect4 {
 
     private:
         size_t current_col_;
+        size_t last_piece_col_;
+        size_t last_piece_row_;
+        bool started_;
+
         GameBoard board_ = GameBoard(7, 6, 4, true, 0, kWindowSizeX, 0, kWindowSizeY);
     };
 }

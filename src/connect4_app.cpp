@@ -13,11 +13,14 @@ namespace connect4 {
     void Connect4App::draw() {
         ci::Color background_color("white");
         ci::gl::clear(background_color);
-        board_.DrawBoard();
+        try {
+            board_.DrawBoard();
+        } catch (std::exception &e) {
+            std::cout << e.what();
+        }
     }
 
     void Connect4App::update() {
-        return;
     }
 
     void Connect4App::keyDown(ci::app::KeyEvent event) {
@@ -31,9 +34,11 @@ namespace connect4 {
                 break;
 
             case ci::app::KeyEvent::KEY_RETURN:
-                board_.DropPiece(current_col_, false);
-                break;
-
+                try {
+                    board_.DropPiece(current_col_, false);
+                } catch (const std::exception &e) {
+                    std::cout << e.what();
+                }
         }
     }
 

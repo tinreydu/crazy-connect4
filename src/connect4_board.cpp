@@ -9,7 +9,7 @@
 #include "../include/connect4_board.h"
 
 namespace connect4 {
-    GameBoard::GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn) {
+    GameBoard::GameBoard(int length, int height, int win_length, bool player_one_turn) {
         if (win_length <= length || win_length <= height) {
             length_ = length;
             height_ = height;
@@ -19,8 +19,8 @@ namespace connect4 {
             player_one_turn_ = player_one_turn;
 
             std::vector<char> column;
-            for (size_t x = 0; x < length; x++) {
-                for (size_t y = 0; y < height; y++) {
+            for (int x = 0; x < length; x++) {
+                for (int y = 0; y < height; y++) {
                     column.push_back(' ');
                 }
                 board_.push_back(column);
@@ -31,7 +31,7 @@ namespace connect4 {
         }
     }
 
-    GameBoard::GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn, int min_x, int max_x,
+    GameBoard::GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x,
                          int min_y, int max_y) {
         if (win_length <= length || win_length <= height) {
             length_ = length;
@@ -42,8 +42,8 @@ namespace connect4 {
             player_one_turn_ = player_one_turn;
 
             std::vector<char> column;
-            for (size_t x = 0; x < length; x++) {
-                for (size_t y = 0; y < height; y++) {
+            for (int x = 0; x < length; x++) {
+                for (int y = 0; y < height; y++) {
                     column.push_back(' ');
                 }
                 board_.push_back(column);
@@ -77,8 +77,8 @@ namespace connect4 {
         player_one_turn_ = true;
 
         std::vector<char> column;
-        for (size_t x = 0; x < length_; x++) {
-            for (size_t y = 0; y < height_; y++) {
+        for (int x = 0; x < length_; x++) {
+            for (int y = 0; y < height_; y++) {
                 column.push_back(' ');
             }
             board_.push_back(column);
@@ -91,10 +91,10 @@ namespace connect4 {
         return board_;
     }
 
-    void GameBoard::DropPiece(size_t column, bool override) {
+    void GameBoard::DropPiece(int column, bool override) {
         if (winning_token_ == kEmptySpot) {
             try {
-                size_t y = 0;
+                int y = 0;
                 while (board_.at(column).at(y) != kEmptySpot) {
                     y++;
                 }
@@ -114,6 +114,7 @@ namespace connect4 {
                     }
                 }
             } catch (const std::out_of_range &e) {
+                std::cout << "bruh";
                 throw "Out of range!";
             }
         } else {
@@ -129,7 +130,7 @@ namespace connect4 {
         return token_count_;
     }
 
-    char GameBoard::CheckWinningToken(size_t column, size_t row) const {
+    char GameBoard::CheckWinningToken(int column, int row) const {
         if (CheckHorizontalWin(column, row, kPlayerOneToken) || CheckVerticalWin(column, row, kPlayerOneToken) ||
             CheckDiagonalWin(column, row, kPlayerOneToken, 0) || CheckDiagonalWin(column, row, kPlayerOneToken, 1)) {
             return kPlayerOneToken;
@@ -142,9 +143,9 @@ namespace connect4 {
         }
     }
 
-    bool GameBoard::CheckHorizontalWin(size_t column, size_t row, char token) const {
+    bool GameBoard::CheckHorizontalWin(int column, int row, char token) const {
         size_t token_in_row = 0;
-        for (size_t x = 0; x < length_; x++) {
+        for (int x = 0; x < length_; x++) {
             if (board_.at(x).at(row) == token) {
                 token_in_row++;
                 if (token_in_row == win_length_) {
@@ -157,9 +158,9 @@ namespace connect4 {
         return false;
     }
 
-    bool GameBoard::CheckVerticalWin(size_t column, size_t row, char token) const {
+    bool GameBoard::CheckVerticalWin(int column, int row, char token) const {
         size_t token_in_row = 0;
-        for (size_t y = 0; y < height_; y++) {
+        for (int y = 0; y < height_; y++) {
             if (board_.at(column).at(y) == token) {
                 token_in_row++;
                 if (token_in_row == win_length_) {
@@ -172,14 +173,14 @@ namespace connect4 {
         return false;
     }
 
-    bool GameBoard::CheckDiagonalWin(size_t column, size_t row, char token, size_t direction) const {
+    bool GameBoard::CheckDiagonalWin(int column, int row, char token, size_t direction) const {
         size_t token_in_row = 0;
         if (direction == 0) {
             while (column != 0 && row != 0) {
                 column--;
                 row--;
             }
-            for (int i = 0; row + i < height_ && column + i < length_; i++) {
+            for (int i = 0; row + i < height_ && column + i < length_; ++i) {
                 if (board_.at(column + i).at(row + i) == token) {
                     token_in_row++;
                     if (token_in_row == win_length_) {
@@ -194,7 +195,7 @@ namespace connect4 {
                 column--;
                 row++;
             }
-            for (int i = 0; row - i >= 0 && column + i < length_; i++) {
+            for (int i = 0; row - i >= 0 && column + i < length_; ++i) {
                 if (board_.at(column + i).at(row - i) == token) {
                     token_in_row++;
                     if (token_in_row == win_length_) {
@@ -212,34 +213,41 @@ namespace connect4 {
         return winning_token_;
     }
 
-    size_t GameBoard::GetWinLength() const {
+    int GameBoard::GetWinLength() const {
         return win_length_;
     }
 
-    size_t GameBoard::GetLength() const {
+    int GameBoard::GetLength() const {
         return length_;
     }
 
-    size_t GameBoard::GetHeight() const {
+    int GameBoard::GetHeight() const {
         return height_;
     }
 
-    void GameBoard::DrawBoard() const{
+    void GameBoard::DrawBoard() const {
         ci::gl::color(ci::Color("blue"));
         // The Board will consist of the middle half of the screen. The sides are 1/4 of the window size each.
         ci::gl::drawSolidRect(ci::Rectf(glm::vec2(max_x_ / 4,max_y_ / 4), glm::vec2((3 * max_x_) / 4, (3 * max_y_) / 4)));
 
         int xCoord = (max_x_ / 4) + (x_space_ / 2);
-        int yCoord = (max_y_ / 4) + (y_space_ / 2);
-        for (size_t x = 0; x < length_; x++) {
-            for (size_t y = 0; y < height_; y++) {
-                ci::gl::color(ci::Color("black"));
+        int yCoord = ((3 * max_y_) / 4) - (y_space_ / 2);
+        for (int x = 0; x < length_; ++x) {
+            for (int y = 0; y < height_; ++y) {
+                if (board_.at(x).at(y) == kPlayerOneToken) {
+                    ci::gl::color(ci::Color("red"));
+                } else if (board_.at(x).at(y) == kPlayerTwoToken) {
+                    ci::gl::color(ci::Color("yellow"));
+                } else {
+                    ci::gl::color(ci::Color("black"));
+                }
                 ci::gl::drawSolidCircle(glm::vec2(xCoord, yCoord), radius_);
-                yCoord += y_space_;
+                yCoord = yCoord - y_space_;
             }
-            yCoord = (max_y_ / 4) + (y_space_ / 2);
+            yCoord = ((3 * max_y_) / 4) - (y_space_ / 2);
             xCoord += x_space_;
         }
     }
+
 }
 

@@ -9,6 +9,7 @@
 #include <vector>
 
 namespace connect4 {
+
     class GameBoard {
     public:
         /**
@@ -18,7 +19,7 @@ namespace connect4 {
          * @param win_length required tokens in a row to win
          * @param player_one_turn is it player one's turn?
          */
-        GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn);
+        GameBoard(int length, int height, int win_length, bool player_one_turn);
 
         /**
          * Creates a Connect 4 game board to be displayed. Same as above, but with window bounds
@@ -31,7 +32,7 @@ namespace connect4 {
          * @param min_y
          * @param max_y
          */
-        GameBoard(size_t length, size_t height, size_t win_length, bool player_one_turn, int min_x, int max_x, int min_y, int max_y);
+        GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x, int min_y, int max_y);
 
         /**
          * Creates a connect 4 game of size 7 x 6 with win length of 4
@@ -44,7 +45,7 @@ namespace connect4 {
          * @param row vertical coordinate
          * @return if player 1 or 2 won. If neither, returns the empty space
          */
-        char CheckWinningToken(size_t column, size_t row) const;
+        char CheckWinningToken(int column, int row) const;
 
         /**
          * Check if there is a horizontal win at a given location
@@ -53,7 +54,7 @@ namespace connect4 {
          * @param token which token is being checked for a win
          * @return if there is a win
          */
-        bool CheckHorizontalWin(size_t column, size_t row, char token) const;
+        bool CheckHorizontalWin(int column, int row, char token) const;
 
         /**
          * Check if there is a vertical win at a given location
@@ -62,7 +63,7 @@ namespace connect4 {
          * @param token which token is being checked for a win
          * @return if there is a win
          */
-        bool CheckVerticalWin(size_t column, size_t row, char token) const;
+        bool CheckVerticalWin(int column, int row, char token) const;
 
         /**
          * Check if there is a diagonal win in either direction at a given location
@@ -72,7 +73,7 @@ namespace connect4 {
          * @param direction 0 = downwards diagonal, 1 = upward diagonal
          * @return if there is a win
          */
-        bool CheckDiagonalWin(size_t column, size_t row, char token, size_t direction) const;
+        bool CheckDiagonalWin(int column, int row, char token, size_t direction) const;
 
         /**
          * Drops a piece at a certain column. Per connect 4 rules, the piece will fall to the lowest open spot in the column
@@ -80,7 +81,7 @@ namespace connect4 {
          * @param column
          * @param override if override on or off
          */
-        void DropPiece(size_t column, bool override);
+        void DropPiece(int column, bool override);
 
         /**
          * Returns the board
@@ -106,20 +107,18 @@ namespace connect4 {
          */
         char GetWinner() const;
 
-        size_t GetLength() const;
+        int GetLength() const;
 
-        size_t GetHeight() const;
+        int GetHeight() const;
 
-        size_t GetWinLength() const;
+        int GetWinLength() const;
 
         void DrawBoard() const;
 
-        void Reset();
-
     private:
         bool player_one_turn_;
-        size_t length_;
-        size_t height_;
+        int length_;
+        int height_;
         size_t win_length_;
         size_t token_count_;
 
