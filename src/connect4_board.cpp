@@ -108,13 +108,13 @@ namespace connect4 {
 
                 // The minimum amount of tokens on the board to win is 2 * win length - 1
                 // We don't start checking until after the minimum amount of tokens has been reached
+                // Override on for testing and you don't want automatic win checking
                 if (!override) {
                     if (token_count_ >= (2 * win_length_) - 1) {
                         winning_token_ = CheckWinningToken(column, y);
                     }
                 }
             } catch (const std::out_of_range &e) {
-                std::cout << "bruh";
                 throw "Out of range!";
             }
         } else {

@@ -60,6 +60,7 @@ ci_make_app(
         CINDER_PATH ${CINDER_PATH}
         SOURCES apps/connect4_app_main.cpp ${SOURCE_FILES}
         INCLUDES include
+        # BLOCKS Box2D
 )
 
 ci_make_app(
