@@ -131,20 +131,35 @@ namespace connect4 {
          */
         void DrawBoard() const;
 
+        void Clear();
+
+        int GetXSpace() const;
+
+        int GetYSpace() const;
+
+        void SetLength(int length);
+
+        void SetHeight(int height);
+
+        void SetWinLength(int win_length);
+
+        void SetWindowSize(int min_x, int max_x, int min_y,
+                           int max_y);
+
     private:
         bool player_one_turn_;
         int length_;
         int height_;
-        size_t win_length_;
-        size_t token_count_;
+        int win_length_;
+        int token_count_;
 
         std::vector<std::vector<char>> board_;
 
         char winning_token_;
 
-        const char kPlayerOneToken = 'x';
-        const char kPlayerTwoToken = 'o';
-        const char kEmptySpot = ' ';
+        char kPlayerOneToken = 'x';
+        char kPlayerTwoToken = 'o';
+        char kEmptySpot = ' ';
 
         int min_x_;
         int min_y_;

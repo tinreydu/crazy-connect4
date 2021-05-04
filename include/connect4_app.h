@@ -31,6 +31,8 @@ namespace connect4 {
 
         void drawMenu() const;
 
+        void initializeBoard();
+
         const int kWindowSizeX = 1920;
         const int kWindowSizeY = 1080;
         const int kMargin = 100;
@@ -38,11 +40,20 @@ namespace connect4 {
     private:
         int current_col_;
 
+        int length_ = 7;
+        int height_ = 6;
+        int win_length_ = 4;
+
         // 1 for standard game
         // 2 for wild game
         size_t game_type_;
+
+        ci::Font large = ci::Font("arial", 70);
+        ci::Font med = ci::Font("arial", 35);
+        ci::Font small = ci::Font("arial", 18);
+
         bool showing_menu_;
-        GameBoard board_ = GameBoard(7, 6, 4, true, 0, kWindowSizeX, 0, kWindowSizeY);
+        GameBoard board_;
     };
 }
 

@@ -112,10 +112,12 @@ namespace connect4 {
                 if (!override) {
                     if (token_count_ >= (2 * win_length_) - 1) {
                         winning_token_ = CheckWinningToken(column, y);
+                    } else if (token_count_ == length_ * height_ && winning_token_ == kEmptySpot) {
+                        winning_token_ = 'd';
                     }
                 }
             } catch (const std::out_of_range &e) {
-                throw "Out of range!";
+                std::cout << "Out of range!" << std::endl;
             }
         } else {
             std::cout << "Someone has already won!" << std::endl;
@@ -144,7 +146,7 @@ namespace connect4 {
     }
 
     bool GameBoard::CheckHorizontalWin(int column, int row, char token) const {
-        size_t token_in_row = 0;
+        int token_in_row = 0;
         for (int x = 0; x < length_; x++) {
             if (board_.at(x).at(row) == token) {
                 token_in_row++;
@@ -159,7 +161,7 @@ namespace connect4 {
     }
 
     bool GameBoard::CheckVerticalWin(int column, int row, char token) const {
-        size_t token_in_row = 0;
+        int token_in_row = 0;
         for (int y = 0; y < height_; y++) {
             if (board_.at(column).at(y) == token) {
                 token_in_row++;
@@ -174,7 +176,7 @@ namespace connect4 {
     }
 
     bool GameBoard::CheckDiagonalWin(int column, int row, char token, size_t direction) const {
-        size_t token_in_row = 0;
+        int token_in_row = 0;
         if (direction == 0) {
             while (column != 0 && row != 0) {
                 column--;
@@ -250,5 +252,42 @@ namespace connect4 {
         }
     }
 
+    void GameBoard::Clear() {
+        token_count_ = 0;
+        winning_token_ = ' ';
+
+        for (int x = 0; x < length_; x++) {
+            for (int y = 0; y < height_; y++) {
+                board_.at(x).at(y) = kEmptySpot;
+            }
+        }
+    }
+
+    int GameBoard::GetXSpace() const {
+        return x_space_;
+    }
+
+    int GameBoard::GetYSpace() const {
+        return y_space_;
+    }
+
+    void GameBoard::SetLength(int length) {
+        length_ = length;
+    }
+
+    void GameBoard::SetHeight(int height) {
+        height_ = height;
+    }
+
+    void GameBoard::SetWinLength(int win_length) {
+        win_length_ = win_length;
+    }
+
+    void GameBoard::SetWindowSize(int min_x, int max_x, int min_y, int max_y) {
+        min_x_ = min_x;
+        min_y_ = min_y;
+        max_x_ = max_x;
+        max_y_ = max_y;
+    }
 }
 
