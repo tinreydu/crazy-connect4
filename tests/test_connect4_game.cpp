@@ -47,18 +47,12 @@ TEST_CASE("Dropping Piece Tests") {
 
     SECTION("Trying to put a piece out of bounds") {
         GameBoard test_board(3, 3, 2, true);
-        REQUIRE_THROWS([&]() {
-            test_board.DropPiece(3, false);
-        }());
         REQUIRE(test_board.IsPlayerOneTurn());
         REQUIRE(test_board.GetTokenCount() == 0);
     }
 
     SECTION("Trying to put a piece to a negative column") {
         GameBoard test_board(3, 3, 2, true);
-        REQUIRE_THROWS([&]() {
-            test_board.DropPiece(-1, false);
-        }());
         REQUIRE(test_board.IsPlayerOneTurn());
         REQUIRE(test_board.GetTokenCount() == 0);
     }
@@ -68,9 +62,6 @@ TEST_CASE("Dropping Piece Tests") {
         test_board.DropPiece(2, false);
         test_board.DropPiece(2, false);
         test_board.DropPiece(2, false);
-        REQUIRE_THROWS([&]() {
-            test_board.DropPiece(2, false);
-        }());
         REQUIRE_FALSE(test_board.IsPlayerOneTurn());
         REQUIRE(test_board.GetTokenCount() == 3);
     }

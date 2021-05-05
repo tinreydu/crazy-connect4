@@ -44,6 +44,7 @@ namespace connect4 {
          */
         void initializeBoard();
 
+
         const int kWindowSizeX = 1920;
         const int kWindowSizeY = 1080;
 
@@ -70,11 +71,16 @@ namespace connect4 {
 
         // 1 for standard game
         // 2 for wild game
+        // 3 for timed game
         size_t game_type_;
 
         char kPlayerOneToken = 'x';
         char kPlayerTwoToken = 'o';
         char kEmptySpot = ' ';
+
+        int player1_timer_;
+        int player2_timer_;
+        bool timer_started_;
 
         ci::Font large = ci::Font("arial", 70);
         ci::Font med = ci::Font("arial", 35);

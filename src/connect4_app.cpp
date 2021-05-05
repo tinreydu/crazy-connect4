@@ -3,6 +3,8 @@
 //
 
 #include "../include/connect4_app.h"
+#include <iostream>
+#include <thread>
 
 
 namespace connect4 {
@@ -10,6 +12,7 @@ namespace connect4 {
         ci::app::setWindowSize(kWindowSizeX, kWindowSizeY);
         current_col_ = board_.GetLength() / 2;
         showing_menu_ = true;
+        timer_started_ = false;
     }
 
     void Connect4App::draw() {
@@ -109,6 +112,32 @@ namespace connect4 {
                             glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"), med);
                 }
 
+            } else if (game_type_ == 3) {
+                if (timer_started_ && board_.GetWinner() == kEmptySpot) {
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                    if (board_.IsPlayerOneTurn()) {
+                        player1_timer_--;
+                    } else if (!board_.IsPlayerOneTurn()) {
+                        player2_timer_--;
+                    }
+
+                    if (player1_timer_ < 0 && player2_timer_ < 0) {
+                        board_.SetWinner('d');
+                    } else if (player1_timer_ <= 0) {
+                        board_.SetWinner(kPlayerTwoToken);
+                    } else if (player2_timer_ <= 0) {
+                        board_.SetWinner(kPlayerOneToken);
+                    }
+                }
+
+                ci::gl::drawStringCentered(std::to_string(player1_timer_) + " seconds",
+                                           glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2),
+                                           ci::Color("black"),
+                                           med);
+                ci::gl::drawStringCentered(std::to_string(player2_timer_) + " seconds",
+                                           glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2),
+                                           ci::Color("black"),
+                                           med);
             }
         } else {
             drawMenu();
@@ -183,6 +212,12 @@ namespace connect4 {
         player2_using_swap_ = false;
 
         swap_col_1 = -1;
+
+        if (game_type_ == 3) {
+            player1_timer_ = 5;
+            player2_timer_ = 5;
+
+        }
     }
 
     void Connect4App::drawMenu() const {
@@ -192,7 +227,9 @@ namespace connect4 {
 
         ci::gl::drawStringCentered("Press 1 for a Standard Game", glm::vec2(kWindowSizeX / 2, kWindowSizeY / 8),
                                    ci::Color("black"), large);
-        ci::gl::drawStringCentered("Press 2 for a Wild Game", glm::vec2(kWindowSizeX / 2, 2 * (kWindowSizeY / 8)),
+        ci::gl::drawStringCentered("Press 2 for a Wild Game", glm::vec2(kWindowSizeX / 2, 3 * (kWindowSizeY / 16)),
+                                   ci::Color("black"), large);
+        ci::gl::drawStringCentered("Press 3 for a Timed Game", glm::vec2(kWindowSizeX / 2, 4 * (kWindowSizeY / 16)),
                                    ci::Color("black"), large);
         ci::gl::drawStringCentered("Use the left and right arrow to change the length of the board",
                                    glm::vec2(kWindowSizeX / 2, 3 * (kWindowSizeY / 8)),
@@ -345,6 +382,9 @@ namespace connect4 {
                 } else {
                     try {
                         board_.DropPiece(current_col_, false);
+                        if (!timer_started_) {
+                            timer_started_ = true;
+                        }
                     } catch (const std::exception &e) {
                         std::cout << "Error!" << std::endl;
                     }
@@ -356,6 +396,7 @@ namespace connect4 {
                     showing_menu_ = true;
                     board_.Clear();
                     current_col_ = board_.GetLength() / 2;
+                    timer_started_ = false;
                 }
                 break;
 
@@ -378,6 +419,15 @@ namespace connect4 {
                     }
                 }
                 break;
+
+            case ci::app::KeyEvent::KEY_3:
+                if (showing_menu_) {
+                    if (win_length_ <= length_ || win_length_ <= height_) {
+                        showing_menu_ = false;
+                        game_type_ = 3;
+                        initializeBoard();
+                    }
+                }
         }
     }
 }

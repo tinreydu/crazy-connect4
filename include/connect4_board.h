@@ -176,7 +176,14 @@ namespace connect4 {
          */
         void DropBlocker(int column);
 
+        /**
+         * Manuall sets the winner of the game
+         * @param winner token of the winner
+         */
+        void SetWinner(char winner);
+
     private:
+
         bool player_one_turn_;
         int length_;
         int height_;
@@ -204,6 +211,8 @@ namespace connect4 {
         int radius_;
         int x_space_;
         int y_space_;
+
+
     };
 }
 
