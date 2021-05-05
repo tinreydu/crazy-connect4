@@ -56,9 +56,7 @@ namespace connect4 {
                 column.clear();
             }
 
-            min_x_ = min_x;
             max_x_ = max_x;
-            min_y_ = min_y;
             max_y_ = max_y;
 
             x_space_ = (max_x_ / 2) / length_;
@@ -70,9 +68,8 @@ namespace connect4 {
                 radius_ = (0.9 * y_space_) / 2;
             }
         } else {
-            throw "Invalid board size!";
+            throw "Invalid Size";
         }
-
     }
 
     GameBoard::GameBoard() {
@@ -92,7 +89,6 @@ namespace connect4 {
             column.clear();
         }
     }
-
 
     std::vector<std::vector<char>> GameBoard::GetBoard() const {
         return board_;
@@ -227,10 +223,6 @@ namespace connect4 {
 
     char GameBoard::GetWinner() const {
         return winning_token_;
-    }
-
-    int GameBoard::GetWinLength() const {
-        return win_length_;
     }
 
     int GameBoard::GetLength() const {

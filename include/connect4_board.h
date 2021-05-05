@@ -122,32 +122,59 @@ namespace connect4 {
         int GetHeight() const;
 
         /**
-        * Helper method that returns win length of board
-        * @return
-        */
-        int GetWinLength() const;
-
-        /**
          * Draws the board and pieces
          */
         void DrawBoard() const;
 
+        /**
+         * Clears the board of pieces
+         */
         void Clear();
 
+        /**
+         * Gets the x distance between circles to draw
+         * @return
+         */
         int GetXSpace() const;
 
+
+        /**
+         * Gets the y distance between circles to draw
+         * @return
+         */
         int GetYSpace() const;
 
+        /**
+         * Switches columns 1 and 2 and all their pieces. Used in wild mode
+         * @param col1
+         * @param col2
+         */
         void SwapColumns(int col1, int col2);
 
+        /**
+         * Deletes a selected column. Used in wild mode
+         * @param col
+         */
         void DeleteColumn(int col);
 
+        /**
+         * Gets how many turns player1 has until their powerup is ready
+         * @return
+         */
         int GetPlayer1TurnsUntilPowerup();
 
+        /**
+         * Gets how many turns player1 has until their powerup is ready
+         * @return
+         */
         int GetPlayer2TurnsUntilPowerup();
 
+        /**
+         * Drops a blocker piece at the given column. This is not a sided token, so it doesn't count to win in a row
+         * Does not switch turns after dropping
+         * @param column
+         */
         void DropBlocker(int column);
-
 
     private:
         bool player_one_turn_;
@@ -156,7 +183,6 @@ namespace connect4 {
         int win_length_;
         int token_count_;
 
-        int game_type_;
         int player1_turns_until_powerup_;
         int player2_turns_until_powerup_;
 
@@ -164,14 +190,14 @@ namespace connect4 {
 
         char winning_token_;
 
+        int game_type_;
+
         char kPlayerOneToken = 'x';
         char kPlayerTwoToken = 'o';
         char kEmptySpot = ' ';
 
         int kRechargeTime = 6;
 
-        int min_x_;
-        int min_y_;
         int max_x_;
         int max_y_;
 

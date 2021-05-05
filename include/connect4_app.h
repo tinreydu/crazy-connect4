@@ -29,18 +29,25 @@ namespace connect4 {
          */
         void keyDown(ci::app::KeyEvent event) override;
 
+        /**
+         * Draws the playing board after the menu
+         */
         void drawBoard();
 
+        /**
+         * Draws the menu with instructions
+         */
         void drawMenu() const;
 
+        /**
+         * Creates a connect 4 board with the user selected dimensions
+         */
         void initializeBoard();
-
 
         const int kWindowSizeX = 1920;
         const int kWindowSizeY = 1080;
-        const int kMargin = 100;
 
-        cinder::audio::VoiceRef mVoice;
+        // cinder::audio::VoiceRef mVoice;
 
     private:
         int current_col_;
@@ -55,9 +62,7 @@ namespace connect4 {
         bool player2_using_delete_;
         bool player2_using_blocker_;
 
-
         int swap_col_1;
-
 
         int length_ = 7;
         int height_ = 6;

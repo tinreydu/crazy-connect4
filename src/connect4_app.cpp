@@ -213,6 +213,8 @@ namespace connect4 {
         ci::gl::drawStringCentered("Win Length: " + std::to_string(win_length_),
                                    glm::vec2(kWindowSizeX / 2, 13 * (kWindowSizeY / 16)),
                                    ci::Color("black"), small);
+        ci::gl::drawStringCentered("Make sure either length or height is less than or equal to the win length!",
+                                   glm::vec2(kWindowSizeX / 2, 14 * (kWindowSizeY / 16)), ci::Color("black"), small);
     }
 
     void Connect4App::keyDown(ci::app::KeyEvent event) {
@@ -268,7 +270,7 @@ namespace connect4 {
                         current_col_--;
                     }
                 } else {
-                    if (length_ - 1 >= 0) {
+                    if (length_ - 1 > 0) {
                         length_--;
                     }
                 }
@@ -282,7 +284,7 @@ namespace connect4 {
 
             case ci::app::KeyEvent::KEY_DOWN:
                 if (showing_menu_) {
-                    if (height_ - 1 >= 0) {
+                    if (height_ - 1 > 0) {
                         height_--;
                     }
                 }
@@ -290,7 +292,7 @@ namespace connect4 {
 
             case ci::app::KeyEvent::KEY_COMMA:
                 if (showing_menu_) {
-                    if (win_length_ - 1 >= 0) {
+                    if (win_length_ - 1 > 0) {
                         win_length_--;
                     }
                 }
@@ -359,19 +361,23 @@ namespace connect4 {
 
             case ci::app::KeyEvent::KEY_1:
                 if (showing_menu_) {
-                    showing_menu_ = false;
-                    game_type_ = 1;
-                    initializeBoard();
+                    if (win_length_ <= length_ || win_length_ <= height_) {
+                        showing_menu_ = false;
+                        game_type_ = 1;
+                        initializeBoard();
+                    }
                 }
+                break;
 
             case ci::app::KeyEvent::KEY_2:
                 if (showing_menu_) {
-                    showing_menu_ = false;
-                    game_type_ = 2;
-                    initializeBoard();
+                    if (win_length_ <= length_ || win_length_ <= height_) {
+                        showing_menu_ = false;
+                        game_type_ = 2;
+                        initializeBoard();
+                    }
                 }
+                break;
         }
     }
-
-
 }
