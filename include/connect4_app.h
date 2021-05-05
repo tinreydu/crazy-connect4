@@ -7,7 +7,9 @@
 #include "cinder/app/RendererGl.h"
 #include "cinder/gl/gl.h"
 #include "connect4_board.h"
-//#include "Box2D/Box2D.h"
+
+#include "cinder/audio/Voice.h"
+#include "cinder/audio/Source.h"
 
 namespace connect4 {
     class Connect4App : public ci::app::App {
@@ -19,7 +21,7 @@ namespace connect4 {
          */
         void draw() override;
 
-        void update() override;
+        void setup() override;
 
         /**
          * Handles keyboard input
@@ -38,6 +40,8 @@ namespace connect4 {
         const int kWindowSizeY = 1080;
         const int kMargin = 100;
 
+        cinder::audio::VoiceRef mVoice;
+
     private:
         int current_col_;
         int player1_next_powerup_;
@@ -45,9 +49,12 @@ namespace connect4 {
 
         bool player1_using_swap_;
         bool player1_using_delete_;
+        bool player1_using_blocker_;
 
         bool player2_using_swap_;
         bool player2_using_delete_;
+        bool player2_using_blocker_;
+
 
         int swap_col_1;
 

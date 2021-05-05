@@ -146,6 +146,8 @@ namespace connect4 {
 
         int GetPlayer2TurnsUntilPowerup();
 
+        void DropBlocker(int column);
+
 
     private:
         bool player_one_turn_;

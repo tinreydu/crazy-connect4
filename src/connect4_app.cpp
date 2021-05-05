@@ -4,6 +4,7 @@
 
 #include "../include/connect4_app.h"
 
+
 namespace connect4 {
     Connect4App::Connect4App() {
         ci::app::setWindowSize(kWindowSizeX, kWindowSizeY);
@@ -20,8 +21,9 @@ namespace connect4 {
                 ci::gl::color(ci::Color("black"));
             } else if (player1_using_swap_ || player2_using_swap_) {
                 ci::gl::color(ci::Color("green"));
-            }
-            else if (board_.IsPlayerOneTurn()) {
+            } else if (player1_using_blocker_ || player2_using_blocker_) {
+                ci::gl::color(ci::Color("navy"));
+            } else if (board_.IsPlayerOneTurn()) {
                 ci::gl::color(ci::Color("red"));
             } else {
                 ci::gl::color(ci::Color("yellow"));
@@ -66,6 +68,10 @@ namespace connect4 {
                                                    glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2), ci::Color("black"),
                                                    med);
 
+                    } else if (player1_next_powerup_ == 2) {
+                        ci::gl::drawStringCentered("Blocker is ready!",
+                                                   glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2), ci::Color("black"),
+                                                   med);
                     }
                     ci::gl::drawStringCentered("Press 's' to use your power up",
                                                glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2 + 40), ci::Color("black"),
@@ -79,15 +85,23 @@ namespace connect4 {
                 if (board_.GetPlayer2TurnsUntilPowerup() == 0) {
                     if (player2_next_powerup_ == 0) {
                         ci::gl::drawStringCentered("Column Deleter is ready!",
-                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"),
+                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2),
+                                                   ci::Color("black"),
                                                    med);
                     } else if (player2_next_powerup_ == 1) {
                         ci::gl::drawStringCentered("Column Swapper is ready!",
-                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"),
+                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2),
+                                                   ci::Color("black"),
+                                                   med);
+                    } else if (player2_next_powerup_ == 2) {
+                        ci::gl::drawStringCentered("Blocker is ready!",
+                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2),
+                                                   ci::Color("black"),
                                                    med);
                     }
                     ci::gl::drawStringCentered("Press 's' to use your power up",
-                                               glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2 + 40), ci::Color("black"),
+                                               glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2 + 40),
+                                               ci::Color("black"),
                                                small);
                 } else {
                     ci::gl::drawStringCentered(
@@ -101,7 +115,11 @@ namespace connect4 {
         }
     }
 
-    void Connect4App::update() {
+    void Connect4App::setup() {
+        /*
+        ci::audio::SourceFileRef source = ci::audio::load(ci::app::loadAsset("/home/tinre/bruh.mp3"));
+        mVoice = ci::audio::Voice::create(source);
+         */
     }
 
     void Connect4App::drawBoard() {
@@ -109,31 +127,37 @@ namespace connect4 {
             board_.DrawBoard();
             if (board_.GetWinner() == kPlayerOneToken) {
                 ci::gl::color(ci::Color("royalblue"));
-                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4),
+                                                glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
                 ci::gl::drawStringCentered(
                         "RED WINS!",
                         glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
                 ci::gl::drawStringCentered(
                         "Press 'esc' to return to main menu",
-                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()),
+                        ci::Color("black"), small);
             } else if (board_.GetWinner() == kPlayerTwoToken) {
                 ci::gl::color(ci::Color("royalblue"));
-                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4),
+                                                glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
                 ci::gl::drawStringCentered(
                         "YELLOW WINS!",
                         glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
                 ci::gl::drawStringCentered(
                         "Press 'esc' to return to main menu",
-                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()),
+                        ci::Color("black"), small);
             } else if (board_.GetWinner() == 'd') {
                 ci::gl::color(ci::Color("royalblue"));
-                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4),
+                                                glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
                 ci::gl::drawStringCentered(
                         "draw :(",
                         glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
                 ci::gl::drawStringCentered(
                         "Press 'esc' to return to main menu",
-                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()),
+                        ci::Color("black"), small);
             }
         } catch (std::exception &e) {
             std::cout << e.what();
@@ -145,11 +169,15 @@ namespace connect4 {
 
         // 0 = Delete Column
         // 1 = Swap Column
-        player1_next_powerup_ = rand() % 2;
-        player2_next_powerup_ = rand() % 2;
+        // 2 = Blocker
+        player1_next_powerup_ = rand() % 3;
+        player2_next_powerup_ = rand() % 3;
 
         player1_using_delete_ = false;
         player2_using_delete_ = false;
+
+        player1_using_blocker_ = false;
+        player2_using_blocker_ = false;
 
         player1_using_swap_ = false;
         player2_using_swap_ = false;
@@ -192,9 +220,13 @@ namespace connect4 {
 
             case ci::app::KeyEvent::KEY_s:
                 if (game_type_ == 2) {
-                    if (player1_using_swap_ || player2_using_swap_ || player1_using_delete_ || player2_using_delete_) {
+                    if (player1_using_swap_ || player2_using_swap_ || player1_using_delete_ || player2_using_delete_ ||
+                        player1_using_blocker_ || player2_using_blocker_) {
                         player1_using_delete_ = false;
                         player2_using_delete_ = false;
+
+                        player1_using_blocker_ = false;
+                        player2_using_blocker_ = false;
 
                         player1_using_swap_ = false;
                         player2_using_swap_ = false;
@@ -205,12 +237,16 @@ namespace connect4 {
                             player1_using_delete_ = true;
                         } else if (player1_next_powerup_ == 1) {
                             player1_using_swap_ = true;
+                        } else if (player1_next_powerup_ == 2) {
+                            player1_using_blocker_ = true;
                         }
                     } else if (!(board_.IsPlayerOneTurn()) && board_.GetPlayer2TurnsUntilPowerup() == 0) {
                         if (player2_next_powerup_ == 0) {
                             player2_using_delete_ = true;
                         } else if (player2_next_powerup_ == 1) {
                             player2_using_swap_ = true;
+                        } else if (player2_next_powerup_ == 2) {
+                            player2_using_blocker_ = true;
                         }
                     }
                 }
@@ -272,10 +308,10 @@ namespace connect4 {
                     board_.DeleteColumn(current_col_);
                     if (player1_using_delete_) {
                         player1_using_delete_ = false;
-                        player1_next_powerup_ = rand() % 2;
+                        player1_next_powerup_ = rand() % 3;
                     } else {
                         player2_using_delete_ = false;
-                        player2_next_powerup_ = rand() % 2;
+                        player2_next_powerup_ = rand() % 3;
                     }
                 } else if (player1_using_swap_ || player2_using_swap_) {
                     if (swap_col_1 == -1) {
@@ -285,11 +321,24 @@ namespace connect4 {
                         swap_col_1 = -1;
                         if (player1_using_swap_) {
                             player1_using_swap_ = false;
-                            player1_next_powerup_ = rand() % 2;
+                            player1_next_powerup_ = rand() % 3;
                         } else {
                             player2_using_swap_ = false;
-                            player2_next_powerup_ = rand() % 2;
+                            player2_next_powerup_ = rand() % 3;
                         }
+                    }
+                } else if (player1_using_blocker_ || player2_using_blocker_) {
+                    try {
+                        board_.DropBlocker(current_col_);
+                        if (player1_using_blocker_) {
+                            player1_using_blocker_ = false;
+                            player1_next_powerup_ = rand() % 3;
+                        } else {
+                            player2_using_blocker_ = false;
+                            player2_next_powerup_ = rand() % 3;
+                        }
+                    } catch (const std::out_of_range &e) {
+                        std::cout << "Out of Range!" << std::endl;
                     }
                 } else {
                     try {

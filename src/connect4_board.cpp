@@ -255,6 +255,8 @@ namespace connect4 {
                     ci::gl::color(ci::Color("red"));
                 } else if (board_.at(x).at(y) == kPlayerTwoToken) {
                     ci::gl::color(ci::Color("yellow"));
+                } else if (board_.at(x).at(y) == 'b') {
+                    ci::gl::color(ci::Color("navy"));
                 } else {
                     ci::gl::color(ci::Color("black"));
                 }
@@ -295,7 +297,10 @@ namespace connect4 {
 
     void GameBoard::DeleteColumn(int col) {
         for (int y = 0; y < height_; y++) {
-            board_.at(col).at(y) = kEmptySpot;
+            if (board_.at(col).at(y) != kEmptySpot) {
+                board_.at(col).at(y) = kEmptySpot;
+                token_count_--;
+            }
         }
 
         if (player_one_turn_) {
@@ -321,7 +326,7 @@ namespace connect4 {
         player_one_turn_ = !player_one_turn_;
         int p1_wins = 0;
         int p2_wins = 0;
-        for (int y = 0; y < length_; y++) {
+        for (int y = 0; y < height_; ++y) {
             if (CheckWinningToken(col1, y) == kPlayerOneToken) {
                 p1_wins++;
             } else if (CheckWinningToken(col1, y) == kPlayerTwoToken) {
@@ -329,7 +334,7 @@ namespace connect4 {
             }
         }
 
-        for (int y = 0; y < length_; y++) {
+        for (int y = 0; y < height_; ++y) {
             if (CheckWinningToken(col2, y) == kPlayerOneToken) {
                 p1_wins++;
             } else if (CheckWinningToken(col2, y) == kPlayerTwoToken) {
@@ -345,6 +350,26 @@ namespace connect4 {
             winning_token_ = kEmptySpot;
         } else {
             winning_token_ = 'd';
+        }
+    }
+
+    void GameBoard::DropBlocker(int column) {
+        if (winning_token_ == kEmptySpot) {
+            try {
+                int y = 0;
+                while (board_.at(column).at(y) != kEmptySpot) {
+                    y++;
+                }
+                board_.at(column).at(y) = 'b';
+                token_count_++;
+                if (player_one_turn_) {
+                    player1_turns_until_powerup_ = kRechargeTime;
+                } else {
+                    player2_turns_until_powerup_ = kRechargeTime;
+                }
+            } catch (const std::out_of_range &e) {
+                throw e;
+            }
         }
     }
 }
