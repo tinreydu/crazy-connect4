@@ -16,11 +16,17 @@ namespace connect4 {
         ci::gl::clear(background_color);
         if (!showing_menu_) {
             drawBoard();
-            if (board_.IsPlayerOneTurn()) {
+            if (player1_using_delete_ || player2_using_delete_) {
+                ci::gl::color(ci::Color("black"));
+            } else if (player1_using_swap_ || player2_using_swap_) {
+                ci::gl::color(ci::Color("green"));
+            }
+            else if (board_.IsPlayerOneTurn()) {
                 ci::gl::color(ci::Color("red"));
             } else {
                 ci::gl::color(ci::Color("yellow"));
             }
+
             ci::gl::drawSolidTriangle(
                     glm::vec2((kWindowSizeX / 4) + (current_col_ * board_.GetXSpace() + (board_.GetXSpace() / 2)),
                               (kWindowSizeY / 4) - 5),
@@ -34,15 +40,61 @@ namespace connect4 {
             ci::gl::color(ci::Color("red"));
             ci::gl::drawSolidRect(ci::Rectf(glm::vec2(0, 0), glm::vec2(kWindowSizeX / 4, kWindowSizeY)));
             ci::gl::color(ci::Color("yellow"));
-            ci::gl::drawSolidRect(ci::Rectf(glm::vec2(3 * (kWindowSizeX / 4), 0), glm::vec2(kWindowSizeX, kWindowSizeY)));
-            ci::gl::drawStringCentered("Player One", glm::vec2(kWindowSizeX / 8, kWindowSizeY / 8),ci::Color("black"), med);
-            ci::gl::drawStringCentered("Player Two", glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 8),ci::Color("black"), med);
+            ci::gl::drawSolidRect(
+                    ci::Rectf(glm::vec2(3 * (kWindowSizeX / 4), 0), glm::vec2(kWindowSizeX, kWindowSizeY)));
+            ci::gl::drawStringCentered("Player One", glm::vec2(kWindowSizeX / 8, kWindowSizeY / 8), ci::Color("black"),
+                                       med);
+            ci::gl::drawStringCentered("Player Two", glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 8),
+                                       ci::Color("black"), med);
 
             ci::gl::color(ci::Color("black"));
             if (board_.IsPlayerOneTurn()) {
-                ci::gl::drawStrokedRect(ci::Rectf(glm::vec2(2,2), glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4)), 4);
+                ci::gl::drawStrokedRect(ci::Rectf(glm::vec2(2, 2), glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4)), 4);
             } else {
-                ci::gl::drawStrokedRect(ci::Rectf(glm::vec2(3 * (kWindowSizeX / 4),2), glm::vec2(kWindowSizeX - 2, (kWindowSizeY / 4))), 4);
+                ci::gl::drawStrokedRect(ci::Rectf(glm::vec2(3 * (kWindowSizeX / 4), 2),
+                                                  glm::vec2(kWindowSizeX - 2, (kWindowSizeY / 4))), 4);
+            }
+
+            if (game_type_ == 2) {
+                if (board_.GetPlayer1TurnsUntilPowerup() == 0) {
+                    if (player1_next_powerup_ == 0) {
+                        ci::gl::drawStringCentered("Column Deleter is ready!",
+                                                   glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2), ci::Color("black"),
+                                                   med);
+                    } else if (player1_next_powerup_ == 1) {
+                        ci::gl::drawStringCentered("Column Swapper is ready!",
+                                                   glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2), ci::Color("black"),
+                                                   med);
+
+                    }
+                    ci::gl::drawStringCentered("Press 's' to use your power up",
+                                               glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2 + 40), ci::Color("black"),
+                                               small);
+                } else {
+                    ci::gl::drawStringCentered(
+                            std::to_string(board_.GetPlayer1TurnsUntilPowerup()) + " turns until next power up",
+                            glm::vec2(kWindowSizeX / 8, kWindowSizeY / 2), ci::Color("black"), med);
+                }
+
+                if (board_.GetPlayer2TurnsUntilPowerup() == 0) {
+                    if (player2_next_powerup_ == 0) {
+                        ci::gl::drawStringCentered("Column Deleter is ready!",
+                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"),
+                                                   med);
+                    } else if (player2_next_powerup_ == 1) {
+                        ci::gl::drawStringCentered("Column Swapper is ready!",
+                                                   glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"),
+                                                   med);
+                    }
+                    ci::gl::drawStringCentered("Press 's' to use your power up",
+                                               glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2 + 40), ci::Color("black"),
+                                               small);
+                } else {
+                    ci::gl::drawStringCentered(
+                            std::to_string(board_.GetPlayer2TurnsUntilPowerup()) + " turns until next power up",
+                            glm::vec2(7 * (kWindowSizeX / 8), kWindowSizeY / 2), ci::Color("black"), med);
+                }
+
             }
         } else {
             drawMenu();
@@ -55,14 +107,54 @@ namespace connect4 {
     void Connect4App::drawBoard() {
         try {
             board_.DrawBoard();
+            if (board_.GetWinner() == kPlayerOneToken) {
+                ci::gl::color(ci::Color("royalblue"));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawStringCentered(
+                        "RED WINS!",
+                        glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
+                ci::gl::drawStringCentered(
+                        "Press 'esc' to return to main menu",
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+            } else if (board_.GetWinner() == kPlayerTwoToken) {
+                ci::gl::color(ci::Color("royalblue"));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawStringCentered(
+                        "YELLOW WINS!",
+                        glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
+                ci::gl::drawStringCentered(
+                        "Press 'esc' to return to main menu",
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+            } else if (board_.GetWinner() == 'd') {
+                ci::gl::color(ci::Color("royalblue"));
+                ci::gl::drawSolidRect(ci::Rectf(glm::vec2(kWindowSizeX / 4, kWindowSizeY / 4), glm::vec2(3 * (kWindowSizeX / 4), 3 * (kWindowSizeY / 4))));
+                ci::gl::drawStringCentered(
+                        "draw :(",
+                        glm::vec2(kWindowSizeX / 2, kWindowSizeY / 2), ci::Color("black"), large);
+                ci::gl::drawStringCentered(
+                        "Press 'esc' to return to main menu",
+                        glm::vec2(kWindowSizeX / 2 + board_.GetXSpace(), kWindowSizeY / 2 + board_.GetYSpace()), ci::Color("black"), small);
+            }
         } catch (std::exception &e) {
             std::cout << e.what();
         }
     }
 
     void Connect4App::initializeBoard() {
-        board_ = GameBoard(length_, height_, win_length_, true, 0, kWindowSizeX, 0, kWindowSizeY);
+        board_ = GameBoard(length_, height_, win_length_, true, 0, kWindowSizeX, 0, kWindowSizeY, game_type_);
 
+        // 0 = Delete Column
+        // 1 = Swap Column
+        player1_next_powerup_ = rand() % 2;
+        player2_next_powerup_ = rand() % 2;
+
+        player1_using_delete_ = false;
+        player2_using_delete_ = false;
+
+        player1_using_swap_ = false;
+        player2_using_swap_ = false;
+
+        swap_col_1 = -1;
     }
 
     void Connect4App::drawMenu() const {
@@ -97,6 +189,33 @@ namespace connect4 {
 
     void Connect4App::keyDown(ci::app::KeyEvent event) {
         switch (event.getCode()) {
+
+            case ci::app::KeyEvent::KEY_s:
+                if (game_type_ == 2) {
+                    if (player1_using_swap_ || player2_using_swap_ || player1_using_delete_ || player2_using_delete_) {
+                        player1_using_delete_ = false;
+                        player2_using_delete_ = false;
+
+                        player1_using_swap_ = false;
+                        player2_using_swap_ = false;
+
+                        swap_col_1 = -1;
+                    } else if (board_.IsPlayerOneTurn() && board_.GetPlayer1TurnsUntilPowerup() == 0) {
+                        if (player1_next_powerup_ == 0) {
+                            player1_using_delete_ = true;
+                        } else if (player1_next_powerup_ == 1) {
+                            player1_using_swap_ = true;
+                        }
+                    } else if (!(board_.IsPlayerOneTurn()) && board_.GetPlayer2TurnsUntilPowerup() == 0) {
+                        if (player2_next_powerup_ == 0) {
+                            player2_using_delete_ = true;
+                        } else if (player2_next_powerup_ == 1) {
+                            player2_using_swap_ = true;
+                        }
+                    }
+                }
+                break;
+
             case ci::app::KeyEvent::KEY_RIGHT:
                 if (!showing_menu_) {
                     if (current_col_ + 1 < board_.GetLength()) {
@@ -149,10 +268,35 @@ namespace connect4 {
 
 
             case ci::app::KeyEvent::KEY_RETURN:
-                try {
-                    board_.DropPiece(current_col_, false);
-                } catch (const std::exception &e) {
-                    std::cout << "Error!" << std::endl;
+                if (player1_using_delete_ || player2_using_delete_) {
+                    board_.DeleteColumn(current_col_);
+                    if (player1_using_delete_) {
+                        player1_using_delete_ = false;
+                        player1_next_powerup_ = rand() % 2;
+                    } else {
+                        player2_using_delete_ = false;
+                        player2_next_powerup_ = rand() % 2;
+                    }
+                } else if (player1_using_swap_ || player2_using_swap_) {
+                    if (swap_col_1 == -1) {
+                        swap_col_1 = current_col_;
+                    } else if (current_col_ != swap_col_1) {
+                        board_.SwapColumns(swap_col_1, current_col_);
+                        swap_col_1 = -1;
+                        if (player1_using_swap_) {
+                            player1_using_swap_ = false;
+                            player1_next_powerup_ = rand() % 2;
+                        } else {
+                            player2_using_swap_ = false;
+                            player2_next_powerup_ = rand() % 2;
+                        }
+                    }
+                } else {
+                    try {
+                        board_.DropPiece(current_col_, false);
+                    } catch (const std::exception &e) {
+                        std::cout << "Error!" << std::endl;
+                    }
                 }
                 break;
 

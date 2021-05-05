@@ -31,9 +31,10 @@ namespace connect4 {
          * @param max_x
          * @param min_y
          * @param max_y
+         * @param game_type 1 for standard, 2 for wild
          */
         GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x, int min_y,
-                  int max_y);
+                  int max_y, int game_type);
 
         /**
          * Creates a connect 4 game of size 7 x 6 with win length of 4
@@ -137,14 +138,14 @@ namespace connect4 {
 
         int GetYSpace() const;
 
-        void SetLength(int length);
+        void SwapColumns(int col1, int col2);
 
-        void SetHeight(int height);
+        void DeleteColumn(int col);
 
-        void SetWinLength(int win_length);
+        int GetPlayer1TurnsUntilPowerup();
 
-        void SetWindowSize(int min_x, int max_x, int min_y,
-                           int max_y);
+        int GetPlayer2TurnsUntilPowerup();
+
 
     private:
         bool player_one_turn_;
@@ -153,6 +154,10 @@ namespace connect4 {
         int win_length_;
         int token_count_;
 
+        int game_type_;
+        int player1_turns_until_powerup_;
+        int player2_turns_until_powerup_;
+
         std::vector<std::vector<char>> board_;
 
         char winning_token_;
@@ -160,6 +165,8 @@ namespace connect4 {
         char kPlayerOneToken = 'x';
         char kPlayerTwoToken = 'o';
         char kEmptySpot = ' ';
+
+        int kRechargeTime = 6;
 
         int min_x_;
         int min_y_;

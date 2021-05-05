@@ -33,12 +33,24 @@ namespace connect4 {
 
         void initializeBoard();
 
+
         const int kWindowSizeX = 1920;
         const int kWindowSizeY = 1080;
         const int kMargin = 100;
 
     private:
         int current_col_;
+        int player1_next_powerup_;
+        int player2_next_powerup_;
+
+        bool player1_using_swap_;
+        bool player1_using_delete_;
+
+        bool player2_using_swap_;
+        bool player2_using_delete_;
+
+        int swap_col_1;
+
 
         int length_ = 7;
         int height_ = 6;
@@ -48,11 +60,16 @@ namespace connect4 {
         // 2 for wild game
         size_t game_type_;
 
+        char kPlayerOneToken = 'x';
+        char kPlayerTwoToken = 'o';
+        char kEmptySpot = ' ';
+
         ci::Font large = ci::Font("arial", 70);
         ci::Font med = ci::Font("arial", 35);
         ci::Font small = ci::Font("arial", 18);
 
         bool showing_menu_;
+
         GameBoard board_;
     };
 }

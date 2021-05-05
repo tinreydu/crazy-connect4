@@ -6,7 +6,6 @@
 #include <iostream>
 #include <cinder/Color.h>
 #include <connect4_app.h>
-#include "../include/connect4_board.h"
 
 namespace connect4 {
     GameBoard::GameBoard(int length, int height, int win_length, bool player_one_turn) {
@@ -17,6 +16,7 @@ namespace connect4 {
             token_count_ = 0;
             winning_token_ = ' ';
             player_one_turn_ = player_one_turn;
+            game_type_ = 1;
 
             std::vector<char> column;
             for (int x = 0; x < length; x++) {
@@ -32,7 +32,7 @@ namespace connect4 {
     }
 
     GameBoard::GameBoard(int length, int height, int win_length, bool player_one_turn, int min_x, int max_x,
-                         int min_y, int max_y) {
+                         int min_y, int max_y, int game_type) {
         if (win_length <= length || win_length <= height) {
             length_ = length;
             height_ = height;
@@ -40,6 +40,12 @@ namespace connect4 {
             token_count_ = 0;
             winning_token_ = ' ';
             player_one_turn_ = player_one_turn;
+            game_type_ = game_type;
+
+            if (game_type == 2) {
+                player1_turns_until_powerup_ = kRechargeTime;
+                player2_turns_until_powerup_ = kRechargeTime;
+            }
 
             std::vector<char> column;
             for (int x = 0; x < length; x++) {
@@ -49,6 +55,7 @@ namespace connect4 {
                 board_.push_back(column);
                 column.clear();
             }
+
             min_x_ = min_x;
             max_x_ = max_x;
             min_y_ = min_y;
@@ -100,8 +107,14 @@ namespace connect4 {
                 }
                 if (player_one_turn_) {
                     board_.at(column).at(y) = kPlayerOneToken;
+                    if (player1_turns_until_powerup_ > 0) {
+                        player1_turns_until_powerup_--;
+                    }
                 } else {
                     board_.at(column).at(y) = kPlayerTwoToken;
+                    if (player2_turns_until_powerup_ > 0) {
+                        player2_turns_until_powerup_--;
+                    }
                 }
                 player_one_turn_ = !player_one_turn_;
                 token_count_++;
@@ -112,8 +125,9 @@ namespace connect4 {
                 if (!override) {
                     if (token_count_ >= (2 * win_length_) - 1) {
                         winning_token_ = CheckWinningToken(column, y);
-                    } else if (token_count_ == length_ * height_ && winning_token_ == kEmptySpot) {
-                        winning_token_ = 'd';
+                        if (token_count_ >= length_ * height_) {
+                            winning_token_ = 'd';
+                        }
                     }
                 }
             } catch (const std::out_of_range &e) {
@@ -271,23 +285,67 @@ namespace connect4 {
         return y_space_;
     }
 
-    void GameBoard::SetLength(int length) {
-        length_ = length;
+    int GameBoard::GetPlayer1TurnsUntilPowerup() {
+        return player1_turns_until_powerup_;
     }
 
-    void GameBoard::SetHeight(int height) {
-        height_ = height;
+    int GameBoard::GetPlayer2TurnsUntilPowerup() {
+        return player2_turns_until_powerup_;
     }
 
-    void GameBoard::SetWinLength(int win_length) {
-        win_length_ = win_length;
+    void GameBoard::DeleteColumn(int col) {
+        for (int y = 0; y < height_; y++) {
+            board_.at(col).at(y) = kEmptySpot;
+        }
+
+        if (player_one_turn_) {
+            player1_turns_until_powerup_ = kRechargeTime;
+        } else {
+            player2_turns_until_powerup_ = kRechargeTime;
+        }
+        player_one_turn_ = !player_one_turn_;
     }
 
-    void GameBoard::SetWindowSize(int min_x, int max_x, int min_y, int max_y) {
-        min_x_ = min_x;
-        min_y_ = min_y;
-        max_x_ = max_x;
-        max_y_ = max_y;
+    void GameBoard::SwapColumns(int col1, int col2) {
+        std::vector<char> holder = board_.at(col1);
+        for (int y = 0; y < height_; y++) {
+            board_.at(col1).at(y) = board_.at(col2).at(y);
+        }
+        board_.at(col2) = holder;
+
+        if (player_one_turn_) {
+            player1_turns_until_powerup_ = kRechargeTime;
+        } else {
+            player2_turns_until_powerup_ = kRechargeTime;
+        }
+        player_one_turn_ = !player_one_turn_;
+        int p1_wins = 0;
+        int p2_wins = 0;
+        for (int y = 0; y < length_; y++) {
+            if (CheckWinningToken(col1, y) == kPlayerOneToken) {
+                p1_wins++;
+            } else if (CheckWinningToken(col1, y) == kPlayerTwoToken) {
+                p2_wins++;
+            }
+        }
+
+        for (int y = 0; y < length_; y++) {
+            if (CheckWinningToken(col2, y) == kPlayerOneToken) {
+                p1_wins++;
+            } else if (CheckWinningToken(col2, y) == kPlayerTwoToken) {
+                p2_wins++;
+            }
+        }
+
+        if (p1_wins > 0 && p2_wins == 0) {
+            winning_token_ = kPlayerOneToken;
+        } else if (p2_wins > 0 && p1_wins == 0) {
+            winning_token_ = kPlayerTwoToken;
+        } else if (p2_wins == 0 && p1_wins == 0) {
+            winning_token_ = kEmptySpot;
+        } else {
+            winning_token_ = 'd';
+        }
     }
 }
 
