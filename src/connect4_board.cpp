@@ -287,6 +287,10 @@ namespace connect4 {
         return player2_turns_until_powerup_;
     }
 
+    void GameBoard::SetWinner(char winner) {
+        winning_token_ = winner;
+    }
+
     void GameBoard::DeleteColumn(int col) {
         for (int y = 0; y < height_; y++) {
             if (board_.at(col).at(y) != kEmptySpot) {
